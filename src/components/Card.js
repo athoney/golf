@@ -14,7 +14,7 @@ export default function Card({player, cardHeight, data, handleClick, card}) {
         handleClick(card)
     }
 
-    let img = 49   
+    let img = "back"   
     if (card.flipped) {
         img = card.value;
     }

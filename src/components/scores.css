@@ -1,0 +1,12 @@
+#scores {
+    position: absolute;
+    left: -40px;
+    padding: 5px;
+    width: 100px;
+    text-decoration: none;
+    font-size: 20px;
+    color: white;
+    border-radius: 5px;
+    background-color: #56ac8c;
+    transform: rotate(-90deg);
+}

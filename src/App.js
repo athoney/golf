@@ -5,6 +5,8 @@ import './App.css';
 import React from 'react';
 import { useWindowDimensions } from 'react-native';
 import { useState, useEffect } from 'react';
+import LeaderBoard from './components/Scores';
+import ScoreHand from './logic/ScoreHand';
 
 function App() {
   const { height, width } = useWindowDimensions();
@@ -13,7 +15,7 @@ function App() {
   const deckHeight = (height) * (1 / 5);
   const [started, setStarted] = useState(false);
 
-  let numbers = Array.from({ length: 48 }, (_, i) => i + 1);
+  let numbers = Array.from({ length: 52 }, (_, i) => i + 1);
   const [deck, setDeck] = useState([]);
   const [discard, setDiscard] = useState([]);
   const [playerOne, setPlayerOne] = useState({});
@@ -27,6 +29,28 @@ function App() {
   useEffect(() => {
     console.log('Player two', playerTwo);
   }, [playerTwo])
+
+  useEffect(() => {
+
+    if (playerOne.cards && playerTwo.cards) {
+      let allFlipped = true;
+      playerOne.cards.forEach((card) => {
+        if (!card.flipped) {
+          allFlipped = false;
+        }
+      })
+      playerTwo.cards.forEach((card) => {
+        if (!card.flipped) {
+          allFlipped = false;
+        }
+      })
+      if (allFlipped) {
+        console.log(playerOne.cards)
+        ScoreHand(playerOne, playerTwo)
+      }
+    }
+
+  }, [playerOne], [playerTwo])
 
   useEffect(() => {
     console.log('Deck: ', deck);
@@ -124,7 +148,7 @@ function App() {
         cards: prev.cards
       }
     })
-    if (flipCard){
+    if (flipCard) {
       flipDeckCard();
     }
   }
@@ -142,6 +166,7 @@ function App() {
   if (started) {
     course =
       <>
+        <LeaderBoard screenHeight={height / 2} />
         <div className='row d-flex align-items-center justify-content-center' style={{ height: handHeight }}>
           <Hand player="two" selectDiscard={selectDiscard} playDiscard={playDiscard} changeTurn={playerOnesTurn} setHand={setPlayerTwo} rowHeight={handHeight} data={playerTwo} />
         </div>

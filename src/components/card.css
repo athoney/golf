@@ -1,0 +1,7 @@
+.opponent {
+    transform: rotate(180deg);
+}
+
+img {
+    padding: 5px;
+}

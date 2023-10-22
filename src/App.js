@@ -1,16 +1,15 @@
 import Hand from './components/Hand';
 import Deck from './components/Deck';
-import dealCards from './components/Deck';
 import './App.css';
 import React from 'react';
 import { useWindowDimensions } from 'react-native';
 import { useState, useEffect } from 'react';
 import LeaderBoard from './components/Scores';
 import ScoreHand from './logic/ScoreHand';
+import PlayerForms from './components/PlayersForm';
 
 function App() {
-  const { height, width } = useWindowDimensions();
-  // console.log("width: " + width + " height: " + height);
+  const { height } = useWindowDimensions();
   const handHeight = (height) * (2 / 5);
   const deckHeight = (height) * (1 / 5);
   const [started, setStarted] = useState(false);
@@ -23,27 +22,15 @@ function App() {
   const [selectedDiscard, setSelectedDiscard] = useState(false);
   const [selectedDeck, setSelectedDeck] = useState(false);
   const [discardClass, setDiscardClass] = useState("");
+  const [game, setGame] = useState({});
 
   useEffect(() => {
-    console.log("selectedDeck: " + selectedDeck)
-  }, [selectedDeck])
-
-  useEffect(() => {
-    console.log("selectedDiscard: " + selectedDiscard);
     if (selectedDiscard) {
       setDiscardClass("selected");
     } else {
       setDiscardClass("");
     }
   }, [selectedDiscard]);
-
-  useEffect(() => {
-    console.log('Player one', playerOne);
-  }, [playerOne])
-
-  useEffect(() => {
-    console.log('Player two', playerTwo);
-  }, [playerTwo])
 
   useEffect(() => {
 
@@ -60,34 +47,61 @@ function App() {
         }
       })
       if (allFlipped) {
-        console.log(playerOne.cards)
-        ScoreHand(playerOne, playerTwo)
+        const scores = ScoreHand(playerOne, playerTwo)
+        setGame((prev) => {
+          return {
+            currentHole: prev.currentHole + 1,
+            golferOne: prev.golferOne,
+            golferTwo: prev.golferTwo,
+            scores: [
+              ...prev.scores.map((hole) => {
+                if (hole.hole === prev.currentHole) {
+                  return {
+                    hole: hole.hole,
+                    playerOne: scores[0],
+                    playerTwo: scores[1]
+                  }
+                }
+                return hole;
+              }),
+            ]
+          }
+        })
+        startHole();
       }
     }
 
-  }, [playerOne], [playerTwo])
-
-  useEffect(() => {
-    console.log('Deck: ', deck);
-  }, [deck])
-
-  useEffect(() => {
-    console.log('Discard: ', discard);
-  }, [discard])
+  }, [playerOne, playerTwo])
 
   function getCard() {
     const deckSize = numbers.length;
     const i = Math.floor(Math.random() * deckSize);
     const card = numbers[i];
     numbers = numbers.filter((c) => c !== card);
-    console.log(card);
-    console.log(numbers);
     return card;
   }
 
-  const startGame = () => {
-    setStarted(true);
+  const addHole = () => {
+    setGame((prev) => {
+      return {
+        currentHole: prev.currentHole,
+        golferOne: prev.golferOne,
+        golferTwo: prev.golferTwo,
+        scores: [
+          ...prev.scores,
+          {
+            hole: prev.currentHole,
+            playerOne: null,
+            playerTwo: null
+          }
+        ]
+      }
+    })
+  }
+
+  const startHole = () => {
     // deal cards
+    addHole();
     let playerOneCards = [];
     let playerTwoCards = [];
     for (let i = 0; i < 12; i++) {
@@ -99,12 +113,6 @@ function App() {
       }
     }
     const card = getCard();
-    let playerOneCardObject = playerOneCards.map((card) => {
-      return { value: card, flipped: false }
-    });
-    console.log(playerOneCardObject);
-    console.log("player one: " + playerOneCards);
-    console.log("player Two: " + playerTwoCards);
     setPlayerOne({
       turn: true,
       turnCount: 0,
@@ -123,8 +131,19 @@ function App() {
     setDiscard([card]);
   }
 
+  const startGame = (golferOne, golferTwo) => {
+    setStarted(true);
+    setGame({
+      currentHole: 1,
+      golferOne: golferOne,
+      golferTwo: golferTwo,
+      scores: []
+    });
+    startHole();
+  }
+
   function flipDeckCard() {
-    if (selectedDeck == false) {
+    if (!selectedDeck) {
       numbers = deck;
       const card = getCard();
       setDeck(numbers);
@@ -158,7 +177,6 @@ function App() {
 
   const playDiscard = (swapCard) => {
     const card = discard[0];
-    console.log("discard card " + card)
     setDiscard([swapCard, ...discard.filter((c) => c !== card)])
     setSelectedDiscard(false);
     return card;
@@ -170,7 +188,7 @@ function App() {
   if (started) {
     course =
       <>
-        <LeaderBoard screenHeight={height / 2} />
+        <LeaderBoard screenHeight={height / 2} game={game} setGame={setGame} />
         <div className='row d-flex align-items-center justify-content-center' style={{ height: handHeight }}>
           <Hand player="two" selectedDeck={selectedDeck} selectedDiscard={selectedDiscard} playDiscard={playDiscard} changeTurn={playerOnesTurn} setHand={setPlayerTwo} rowHeight={handHeight} data={playerTwo} />
         </div>
@@ -184,7 +202,7 @@ function App() {
         </div>
       </>
   } else {
-    course = <button type="button" id="start-button" className="btn btn-success" onClick={startGame}>Tee time!</button>;
+    course = <PlayerForms startGame={startGame} />
   }
 
   return (

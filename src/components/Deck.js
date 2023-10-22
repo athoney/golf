@@ -1,12 +1,9 @@
 import "./deck.css";
-import Card from "./Card";
 import React from "react";
-import { useState } from "react";
 
 export default function Deck(props) {
 
     function handleClick(){
-        console.log(props.discard[0]);
         if (props.discardClass === ""){
             props.setSelectedDiscard(true);
         } else {

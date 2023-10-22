@@ -27,7 +27,6 @@ export default function Hand(props) {
     }
 
     function handleClick(selectedCard) {
-        console.log("selected card: " + selectedCard)
         if (props.data.turn) {
             if ((props.data.turnCount === 0) && !cardFlipped(selectedCard)) {
                 flipCard(true, selectedCard)
@@ -55,12 +54,6 @@ export default function Hand(props) {
                         })
                     });
                 } else if (!cardFlipped(selectedCard)) {
-                    // const illegalPlay = flipCard(false, selectedCard);
-                    // if (!illegalPlay) {
-                    //     props.changeTurn();
-                    // } else {
-                    //     console.log("illegal play")
-                    // }
                     flipCard(false, selectedCard);
                 }
                 props.changeTurn();

@@ -20,7 +20,22 @@ function App() {
   const [discard, setDiscard] = useState([]);
   const [playerOne, setPlayerOne] = useState({});
   const [playerTwo, setPlayerTwo] = useState({});
-  const [selectDiscard, setSelectedDiscard] = useState(false);
+  const [selectedDiscard, setSelectedDiscard] = useState(false);
+  const [selectedDeck, setSelectedDeck] = useState(false);
+  const [discardClass, setDiscardClass] = useState("");
+
+  useEffect(() => {
+    console.log("selectedDeck: " + selectedDeck)
+  }, [selectedDeck])
+
+  useEffect(() => {
+    console.log("selectedDiscard: " + selectedDiscard);
+    if (selectedDiscard) {
+      setDiscardClass("selected");
+    } else {
+      setDiscardClass("");
+    }
+  }, [selectedDiscard]);
 
   useEffect(() => {
     console.log('Player one', playerOne);
@@ -59,18 +74,6 @@ function App() {
   useEffect(() => {
     console.log('Discard: ', discard);
   }, [discard])
-
-  const addCardPlayerOne = (card) => {
-    setPlayerOne((prev) => {
-      return [...prev, card];
-    });
-  };
-
-  const addCardPlayerTwo = (card) => {
-    setPlayerTwo((prev) => {
-      return [...prev, card];
-    });
-  };
 
   function getCard() {
     const deckSize = numbers.length;
@@ -125,9 +128,11 @@ function App() {
     const card = getCard();
     setDeck(numbers);
     setDiscard([card, ...discard])
+    setSelectedDiscard(false);
+    setSelectedDeck(true);
   }
 
-  const playerOnesTurn = (flipCard = true) => {
+  const playerOnesTurn = () => {
     setPlayerOne((prev) => {
       return {
         turn: true,
@@ -135,12 +140,10 @@ function App() {
         cards: prev.cards
       }
     })
-    if (flipCard) {
-      flipDeckCard();
-    }
+    setSelectedDeck(false);
   }
 
-  const playerTwosTurn = (flipCard = true) => {
+  const playerTwosTurn = () => {
     setPlayerTwo((prev) => {
       return {
         turn: true,
@@ -148,15 +151,14 @@ function App() {
         cards: prev.cards
       }
     })
-    if (flipCard) {
-      flipDeckCard();
-    }
+    setSelectedDeck(true);
   }
 
   const playDiscard = (swapCard) => {
     const card = discard[0];
     console.log("discard card " + card)
     setDiscard([swapCard, ...discard.filter((c) => c !== card)])
+    setSelectedDiscard(false);
     return card;
   }
 
@@ -168,15 +170,15 @@ function App() {
       <>
         <LeaderBoard screenHeight={height / 2} />
         <div className='row d-flex align-items-center justify-content-center' style={{ height: handHeight }}>
-          <Hand player="two" selectDiscard={selectDiscard} playDiscard={playDiscard} changeTurn={playerOnesTurn} setHand={setPlayerTwo} rowHeight={handHeight} data={playerTwo} />
+          <Hand player="two" selectedDeck={selectedDeck} selectedDiscard={selectedDiscard} playDiscard={playDiscard} changeTurn={playerOnesTurn} setHand={setPlayerTwo} rowHeight={handHeight} data={playerTwo} />
         </div>
 
         <div className='row d-flex align-items-center justify-content-center' style={{ height: deckHeight }}>
-          <Deck rowHeight={deckHeight} flipDeckCard={flipDeckCard} setSelectedDiscard={setSelectedDiscard} discard={discard} />
+          <Deck rowHeight={deckHeight} flipDeckCard={flipDeckCard} discardClass={discardClass} setSelectedDiscard={setSelectedDiscard} discard={discard} />
         </div>
 
         <div className='row d-flex align-items-center justify-content-center' style={{ height: handHeight }}>
-          <Hand player="one" selectDiscard={selectDiscard} playDiscard={playDiscard} changeTurn={playerTwosTurn} setHand={setPlayerOne} rowHeight={handHeight} data={playerOne} />
+          <Hand player="one" selectedDeck={selectedDeck} selectedDiscard={selectedDiscard} playDiscard={playDiscard} changeTurn={playerTwosTurn} setHand={setPlayerOne} rowHeight={handHeight} data={playerOne} />
         </div>
       </>
   } else {

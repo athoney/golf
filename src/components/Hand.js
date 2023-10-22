@@ -38,45 +38,33 @@ export default function Hand(props) {
                 } else {
                     flipCard(false, selectedCard);
                 }
-            } else if (props.selectDiscard && cardFlipped) {
-                // User wants to play the discard on flipped card
-                const newCard = props.playDiscard(selectedCard);
-                props.setHand({
-                    turn: false,
-                    turnCount: (props.data.turnCount + 1),
-                    cards: props.data.cards.map((card) => {
-                        if (card.value === selectedCard) {
-                            return { value: newCard, flipped: true }
-                        } else {
-                            return card
-                        }
-                    })
-                });
-                props.changeTurn(false);
-            } else if (props.selectDiscard && !cardFlipped) {
-                // User wants to play the discard on unflipped card
-                const newCard = props.playDiscard(selectedCard);
-                props.setHand({
-                    turn: false,
-                    turnCount: (props.data.turnCount + 1),
-                    cards: props.data.cards.map((card) => {
-                        if (card.value === selectedCard) {
-                            return { value: newCard, flipped: true }
-                        } else {
-                            return card
-                        }
-                    })
-                });
-                props.changeTurn(false);
-            } else if (!cardFlipped(selectedCard)) {
-                const illegalPlay = flipCard(false, selectedCard);
-                if (!illegalPlay) {
-                    props.changeTurn();
-                } else {
-                    console.log("illegal play")
+            }
+            if (props.selectedDiscard || props.selectedDeck) {
+                if (props.selectedDiscard) {
+                    // User wants to play the discard on flipped card
+                    const newCard = props.playDiscard(selectedCard);
+                    props.setHand({
+                        turn: false,
+                        turnCount: (props.data.turnCount + 1),
+                        cards: props.data.cards.map((card) => {
+                            if (card.value === selectedCard) {
+                                return { value: newCard, flipped: true }
+                            } else {
+                                return card
+                            }
+                        })
+                    });
+                } else if (!cardFlipped(selectedCard)) {
+                    // const illegalPlay = flipCard(false, selectedCard);
+                    // if (!illegalPlay) {
+                    //     props.changeTurn();
+                    // } else {
+                    //     console.log("illegal play")
+                    // }
+                    flipCard(false, selectedCard);
                 }
-            } else {
                 props.changeTurn();
+
             }
         }
     }

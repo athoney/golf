@@ -124,12 +124,14 @@ function App() {
   }
 
   function flipDeckCard() {
-    numbers = deck;
-    const card = getCard();
-    setDeck(numbers);
-    setDiscard([card, ...discard])
-    setSelectedDiscard(false);
-    setSelectedDeck(true);
+    if (selectedDeck == false) {
+      numbers = deck;
+      const card = getCard();
+      setDeck(numbers);
+      setDiscard([card, ...discard])
+      setSelectedDiscard(false);
+      setSelectedDeck(true);
+    }
   }
 
   const playerOnesTurn = () => {
@@ -151,7 +153,7 @@ function App() {
         cards: prev.cards
       }
     })
-    setSelectedDeck(true);
+    setSelectedDeck(false);
   }
 
   const playDiscard = (swapCard) => {

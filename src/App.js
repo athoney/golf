@@ -67,7 +67,6 @@ function App() {
             ]
           }
         })
-        // startHole();
         toggleRoundButton();
       }
     }
@@ -141,6 +140,7 @@ function App() {
       golferTwo: golferTwo,
       scores: []
     });
+    toggleRoundButton();
     startHole();
   }
 
@@ -195,8 +195,8 @@ function App() {
   if (started) {
     course =
       <>
+        <button onClick={startHole} className="btn btn-success d-none" id="new-round">Next Round</button>
         <LeaderBoard screenHeight={height / 2} game={game} setGame={setGame} />
-        <button onClick={startHole} class="btn btn-success d-none" id="new-round">Next Round</button>
         <div className='row d-flex align-items-center justify-content-center' style={{ height: handHeight }}>
           <Hand player="two" selectedDeck={selectedDeck} selectedDiscard={selectedDiscard} playDiscard={playDiscard} changeTurn={playerOnesTurn} setHand={setPlayerTwo} rowHeight={handHeight} data={playerTwo} />
         </div>
@@ -210,11 +210,17 @@ function App() {
         </div>
       </>
   } else {
-    course = <PlayerForms startGame={startGame} />
+    course =
+      <>
+        <button onClick={startHole} className="btn btn-success d-none" id="new-round">Next Round</button>
+        <PlayerForms startGame={startGame} />
+
+      </>
   }
 
   return (
     <div className="App">
+
       {course}
     </div>
   );

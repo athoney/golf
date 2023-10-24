@@ -13,7 +13,11 @@ export default function PlayerForms({startGame}) {
 
     function handleSubmit(e){
         e.preventDefault();
-        startGame(inputs.playerOne, inputs.playerTwo);
+        if (inputs.playerOne === undefined || inputs.playerTwo === undefined){
+            startGame("Player One", "Player Two");
+        } else {
+            startGame(inputs.playerOne, inputs.playerTwo);
+        }
     }
 
     return (

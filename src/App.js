@@ -67,7 +67,8 @@ function App() {
             ]
           }
         })
-        startHole();
+        // startHole();
+        toggleRoundButton();
       }
     }
 
@@ -101,6 +102,7 @@ function App() {
 
   const startHole = () => {
     // deal cards
+    toggleRoundButton();
     addHole();
     let playerOneCards = [];
     let playerTwoCards = [];
@@ -182,6 +184,11 @@ function App() {
     return card;
   }
 
+  function toggleRoundButton() {
+    const button = document.getElementById("new-round");
+    button.classList.toggle("d-none");
+  }
+
 
 
   let course;
@@ -189,6 +196,7 @@ function App() {
     course =
       <>
         <LeaderBoard screenHeight={height / 2} game={game} setGame={setGame} />
+        <button onClick={startHole} class="btn btn-success d-none" id="new-round">Next Round</button>
         <div className='row d-flex align-items-center justify-content-center' style={{ height: handHeight }}>
           <Hand player="two" selectedDeck={selectedDeck} selectedDiscard={selectedDiscard} playDiscard={playDiscard} changeTurn={playerOnesTurn} setHand={setPlayerTwo} rowHeight={handHeight} data={playerTwo} />
         </div>

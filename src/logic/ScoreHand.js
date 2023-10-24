@@ -16,17 +16,40 @@ function mapCard(card) {
     }
 }
 
+function scorePair(card1, card2) {
+    if (card1 !== card2) {
+        return card1 + card2;
+    } else if (card1 === -2 && card2 === -2) {
+        return -4;
+    } else {
+        return 0;
+    }
+}
+
 function score(cards) {
     let score = 0;
     const pairs = zip(cards.slice(0, 3), cards.slice(3));
-    // Check for pairs
-    pairs.forEach((pair) => {
-        if (pair[0] !== pair[1]) {
-            score += pair[0] + pair[1];
-        } else if (pair[0] === -2 && pair[1] === -2) {
-            score -= 4;
+    // Check first four are identical
+    if (pairs[0][0] === pairs[0][1] && pairs[1][0] === pairs[1][1] && pairs[0][0] === pairs[1][0]) {
+        if (pairs[0][0] === -2) {
+            score -= 28;
+        } else {
+            score -= 20;
         }
-    });
+        score += scorePair(pairs[2][0], pairs[2][1]);
+    } else if (pairs[1][0] === pairs [1][1] && pairs[2][0] === pairs[2][1] && pairs[1][0] === pairs[2][0]) {
+        if (pairs[1][0] === -2) {
+            score -= 28;
+        } else {
+            score -= 20;
+        }
+        score += scorePair(pairs[0][0], pairs[0][1]);
+    } else {
+        // Check for pairs
+        pairs.forEach((pair) => {
+            score += scorePair(pair[0], pair[1]);
+        });
+    }
     return score;
 }
 

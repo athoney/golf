@@ -53,3 +53,12 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+.row > *{
+  width: auto !important;
+}
+
+div.row {
+  max-width: 100% !important;
+  --bs-gutter-x: 0;
+}

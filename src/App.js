@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import LeaderBoard from './components/Scores';
 import ScoreHand from './logic/ScoreHand';
 import PlayerForms from './components/PlayersForm';
+import Rules from './components/Rules.js';
 
 function App() {
   const { height } = useWindowDimensions();
@@ -23,6 +24,9 @@ function App() {
   const [selectedDeck, setSelectedDeck] = useState(false);
   const [discardClass, setDiscardClass] = useState("");
   const [game, setGame] = useState({});
+
+  let playerOneBackground = "white";
+  let playerTwoBackground = "white";
 
   useEffect(() => {
     if (selectedDiscard) {
@@ -72,6 +76,22 @@ function App() {
     }
 
   }, [playerOne, playerTwo])
+
+  // useEffect(() => {
+  //   if (playerOne.turn){
+  //     playerOneBackground = "lightgreen";
+  //   }else {
+  //     playerOneBackground = "white";
+  //   }
+  // }, [playerOne])
+
+  // useEffect(() => {
+  //   if (playerTwo.turn){
+  //     playerTwoBackground = "lightgreen";
+  //   }else {
+  //     playerTwoBackground = "white";
+  //   }
+  // }, [playerTwo])
 
   function getCard() {
     const deckSize = numbers.length;
@@ -189,15 +209,15 @@ function App() {
     button.classList.toggle("d-none");
   }
 
-
-
   let course;
   if (started) {
     course =
       <>
         <button onClick={startHole} className="btn btn-success d-none" id="new-round">Next Round</button>
         <LeaderBoard screenHeight={height / 2} game={game} setGame={setGame} />
-        <div className='row d-flex align-items-center justify-content-center' style={{ height: handHeight }}>
+        <Rules screenHeight={height / 2} game={game} setGame={setGame} />
+        
+        <div className='row d-flex align-items-center justify-content-center' style={{ height: handHeight, backgroundColor: playerTwoBackground }}>
           <Hand player="two" selectedDeck={selectedDeck} selectedDiscard={selectedDiscard} playDiscard={playDiscard} changeTurn={playerOnesTurn} setHand={setPlayerTwo} rowHeight={handHeight} data={playerTwo} />
         </div>
 
@@ -205,7 +225,7 @@ function App() {
           <Deck rowHeight={deckHeight} flipDeckCard={flipDeckCard} discardClass={discardClass} setSelectedDiscard={setSelectedDiscard} discard={discard} />
         </div>
 
-        <div className='row d-flex align-items-center justify-content-center' style={{ height: handHeight }}>
+        <div className='row d-flex align-items-center justify-content-center' style={{ height: handHeight, backgroundColor: playerOneBackground  }}>
           <Hand player="one" selectedDeck={selectedDeck} selectedDiscard={selectedDiscard} playDiscard={playDiscard} changeTurn={playerTwosTurn} setHand={setPlayerOne} rowHeight={handHeight} data={playerOne} />
         </div>
       </>

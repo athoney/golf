@@ -18,16 +18,16 @@ export default function Rules({ screenHeight, game }) {
                 </div>
                 <div className="offcanvas-body text-start">
                     <h1>Objective</h1>
-                    <p>This game is scored as the name suggests, lowest score wins.</p>
+                    <p>This game is scored as the name suggests, lowest score wins after 9 holes(rounds)</p>
                     <h1>Deal</h1>
                     <p>Each player is dealt six cards. The remaining cards are placed in the deck stack (upside down cards in the middle). One card from the deck is flipped to start the discard deck.</p>
                     <h1>First Play</h1>
-                    <p>Each player flips two of there cards to start the game. The player who makes the first subsequent play changes by hole.</p>
+                    <p>Each player flips two of their cards to start the game.</p>
                     <h1>Subsequent Plays</h1>
                     <p className="mb-0">A player either:</p>
                     <ol>
                         <li>
-                            uses the discard to replace any card in their hand
+                            uses the discard to replace any card in their hand (flipped or upside down)
                         </li>
                         <li>
                             flips a card from the deck. Once the player flips a deck card, they can:
@@ -39,7 +39,7 @@ export default function Rules({ screenHeight, game }) {
                                     flip a card from their hand
                                 </li>
                                 <li>
-                                    click, "End Turn" to leave their hand as is
+                                    click on any flipped card in their hand to stay
                                 </li>
                             </ol>
                         </li>
@@ -49,7 +49,7 @@ export default function Rules({ screenHeight, game }) {
                         Each player's score is the sum of all cards in their hand. Ace = 1, 2-10 = face value, Jack = 10, Queen = 30, King = -2. If two cards in the same column have the same value, the cards cancel out and score zero points unless they are two kings, two stacked kings = -4. Finally, if a player has a quadrant of cards that are all the same value, the player scores -20 points.
                     </p>
                     <h2>Scoring Examples:</h2>
-                    <p><span className="fw-bold">Player One:</span> -20 for the quadrant of twos + 4 and 10 (Jack) = -6</p>
+                    <p><span className="fw-bold">Player One:</span> -20 for the quadrant of twos + 4 + 10 (Jack) = -6</p>
                     <img src={require(`../static/img/hand1.png`)} alt="Hand1" className="w-100"/>
                     <p><span className="fw-bold">Player Two:</span> -4 for the kings + 0 for the other two columns = -4</p>
                     <img src={require(`../static/img/hand2.png`)} alt="Hand1" style={{ transform: "rotate(180deg)" }}className="w-100"/>

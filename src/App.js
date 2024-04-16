@@ -13,7 +13,7 @@ function App() {
   const { height } = useWindowDimensions();
   const handHeight = (height) * (2 / 5);
   const deckHeight = (height) * (1 / 5);
-  const [started, setStarted] = useState(false);
+  const [status, setStatus] = useState("check-in");
 
   let numbers = Array.from({ length: 52 }, (_, i) => i + 1);
   const [deck, setDeck] = useState([]);
@@ -37,7 +37,6 @@ function App() {
   }, [selectedDiscard]);
 
   useEffect(() => {
-
     if (playerOne.cards && playerTwo.cards) {
       let allFlipped = true;
       playerOne.cards.forEach((card) => {
@@ -54,9 +53,7 @@ function App() {
         const scores = ScoreHand(playerOne, playerTwo)
         setGame((prev) => {
           return {
-            currentHole: prev.currentHole + 1,
-            golferOne: prev.golferOne,
-            golferTwo: prev.golferTwo,
+            ...prev,
             scores: [
               ...prev.scores.map((hole) => {
                 if (hole.hole === prev.currentHole) {
@@ -77,21 +74,6 @@ function App() {
 
   }, [playerOne, playerTwo])
 
-  // useEffect(() => {
-  //   if (playerOne.turn){
-  //     playerOneBackground = "lightgreen";
-  //   }else {
-  //     playerOneBackground = "white";
-  //   }
-  // }, [playerOne])
-
-  // useEffect(() => {
-  //   if (playerTwo.turn){
-  //     playerTwoBackground = "lightgreen";
-  //   }else {
-  //     playerTwoBackground = "white";
-  //   }
-  // }, [playerTwo])
 
   function getCard() {
     const deckSize = numbers.length;
@@ -101,28 +83,20 @@ function App() {
     return card;
   }
 
-  const addHole = () => {
-    setGame((prev) => {
-      return {
-        currentHole: prev.currentHole,
-        golferOne: prev.golferOne,
-        golferTwo: prev.golferTwo,
-        scores: [
-          ...prev.scores,
-          {
-            hole: prev.currentHole,
-            playerOne: null,
-            playerTwo: null
-          }
-        ]
-      }
-    })
-  }
-
   const startHole = () => {
     // deal cards
     toggleRoundButton();
-    addHole();
+    if (game.currentHole === 9) {
+      setStatus("game-over");
+      return;
+    }
+    setGame((prev) => {
+      return {
+        ...prev,
+        currentHole: prev.currentHole + 1,
+        scores: [...prev.scores, { hole: prev.currentHole + 1, playerOne: null, playerTwo: null }]
+      }
+    });
     let playerOneCards = [];
     let playerTwoCards = [];
     for (let i = 0; i < 12; i++) {
@@ -153,9 +127,9 @@ function App() {
   }
 
   const startGame = (golferOne, golferTwo) => {
-    setStarted(true);
+    setStatus("playing");
     setGame({
-      currentHole: 1,
+      currentHole: 0,
       golferOne: golferOne,
       golferTwo: golferTwo,
       scores: []
@@ -210,11 +184,11 @@ function App() {
   }
 
   let course;
-  if (started) {
+  if (status == "playing") {
     course =
       <>
         <button onClick={startHole} className="btn btn-success d-none" id="new-round">Next Round</button>
-        <LeaderBoard screenHeight={height / 2} game={game} setGame={setGame} />
+        <LeaderBoard screenHeight={height / 2} game={game} setGame={setGame} show={false}/>
         <Rules screenHeight={height / 2} game={game} setGame={setGame} />
         
         <div className='row d-flex align-items-center justify-content-center' style={{ height: handHeight, backgroundColor: playerTwoBackground }}>
@@ -229,12 +203,22 @@ function App() {
           <Hand player="one" selectedDeck={selectedDeck} selectedDiscard={selectedDiscard} playDiscard={playDiscard} changeTurn={playerTwosTurn} setHand={setPlayerOne} rowHeight={handHeight} data={playerOne} />
         </div>
       </>
-  } else {
+  } else if (status == "check-in") {
     course =
       <>
         <button onClick={startHole} className="btn btn-success d-none" id="new-round">Next Round</button>
         <PlayerForms startGame={startGame} />
 
+      </>
+  } else if (status == "game-over") {
+    course =
+      <>
+        <LeaderBoard screenHeight={height / 2} game={game} setGame={setGame} show={true}/>
+        <div>
+          <h1>Game Over</h1>
+          {game.scores[game.scores.length - 1].playerOne < game.scores[game.scores.length - 1].playerTwo ? <h2>{game.golferOne} Wins!</h2> : <h2>{game.golferTwo} Wins!</h2>}
+          {game.scores[game.scores.length - 1].playerOne === game.scores[game.scores.length - 1].playerTwo ? <h2>It's a tie!</h2> : null}
+        </div>
       </>
   }
 
